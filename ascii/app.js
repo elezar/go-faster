@@ -7,7 +7,7 @@ screen.key(['escape', 'q', 'C-c'], function(ch, key) {
     return process.exit(0);
 });
 
-http.get('http://go-faster.devfest.com:8080/series/dev_fest/data/conversions?field=time:unix&field=download_speed:mbit_s', function(res) {
+http.get('http://go-faster.devfest.com:8080/series/dev_fest_casino/data/conversions?field=time:unix&field=download_speed:mbit_s', function(res) {
   res.on('data', function (chunk) {
     var parsedData = JSON.parse(chunk);
 

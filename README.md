@@ -1,2 +1,2 @@
 # go-faster
-Go Server Client application for continuously measure internet speed and uptime
+Go Server Client application to continuously measure internet speed and uptime
