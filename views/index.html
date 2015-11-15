@@ -61,7 +61,10 @@
 			}
 
 			function drawChart() {
-				url = "http://go-faster.devfest.com:8080/series/proy/data/conversions"
+				url = "http://go-faster.devfest.com:8080/series/proy/data/conversions" +
+					"field=time:unix" +
+					"&field=upload_speed:mbit_s" +
+					"&field=download_speed:mbit_s"
 
 				var response = request("GET", url, function (body, isError) {
 					if (isError){
@@ -82,7 +85,7 @@
 						data.addColumn('number', 'Expected Upload Speed');
 						data.addColumn('number', 'Error');
 						//data.addColumn({type:'string',role:'annotation'});
-						
+
 						data.addRows(response);
 
 						// Chart options
