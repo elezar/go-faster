@@ -18,7 +18,7 @@ func (self Fields) GetRow(metaData *Series, e Entry) (d []interface{}) {
 		switch f.Field {
 		case "time", "unixtime", "timestamp":
 			switch f.Format {
-			case "unixtime":
+			case "unixtime", "unix":
 				v = e.Unixtime
 			case "date":
 				v = time.Unix(e.Unixtime, 0).Format("2006-01-02")

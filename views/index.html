@@ -62,9 +62,11 @@
 
 			function drawChart() {
 				url = "http://go-faster.devfest.com:8080/series/proy/data/conversions" +
-					"field=time:unix" +
+					"?field=time:unix" +
 					"&field=upload_speed:mbit_s" +
-					"&field=download_speed:mbit_s"
+					"&field=download_speed:mbit_s" +
+					"&field=expected_upload_speed:mbit_s" +
+					"&field=expected_download_speed:mbit_s";
 
 				var response = request("GET", url, function (body, isError) {
 					if (isError){
