@@ -15,7 +15,7 @@ type Entry struct {
 	DistanceM       uint64    `json:"distance_m"`
 	LatencyMS       uint64    `json:"latency_ms"`
 	DownloadSpeedBS uint64    `json:"download_speed_bs"`
-	UploadSpeedBS   uint64    `json:"uploadx_speed_bs"`
+	UploadSpeedBS   uint64    `json:"upload_speed_bs"`
 }
 
 type DataContainer struct {

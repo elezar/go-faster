@@ -6,8 +6,7 @@ import (
 
 	"github.com/pakohan/go-faster/api/controller"
 
-	_ "github.com/pakohan/go-faster/api/controller/input"
-	_ "github.com/pakohan/go-faster/api/controller/output"
+	_ "github.com/pakohan/go-faster/api/controller/logs"
 )
 
 func main() {
