@@ -10,8 +10,42 @@ import (
 )
 
 type Series struct {
-	Name string       `json:"name"`
-	l    sync.RWMutex `json:"-"`
+	l                     sync.RWMutex `json:"-"`
+	Name                  string       `json:"name"`
+	ExpectedDownloadSpeed uint64       `json:"expected_download_speed"`
+	ExpectedUploadSpeed   uint64       `json:"expected_upload_speed"`
+}
+
+func (self *Series) load() (err error) {
+	var f *os.File
+	f, err = os.Open(basePath + self.Name + "/metadata.json")
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	err = json.NewDecoder(f).Decode(self)
+	return
+}
+
+func (self *Series) Save() (err error) {
+	self.l.Lock()
+	defer self.l.Unlock()
+
+	err = os.RemoveAll(basePath + self.Name + "/metadata.json")
+	if err != nil {
+		return
+	}
+
+	var f *os.File
+	f, err = os.Create(basePath + self.Name + "/metadata.json")
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	err = json.NewEncoder(f).Encode(self)
+	return
 }
 
 func (self *Series) AddEntries(entries ...Entry) (err error) {

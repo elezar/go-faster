@@ -16,9 +16,9 @@
 
 <html>
 	<head>
-		
+
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-		
+
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
 		<!--Load the AJAX API-->
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -29,7 +29,7 @@
 
 			// Callback to run when the Google Visualization API is loaded.
 			google.setOnLoadCallback(drawChart);
-			
+
 			function request(method, path, cb, body) {
 					var xmlhttp = new XMLHttpRequest();
 					xmlhttp.onreadystatechange=function() {
@@ -46,9 +46,9 @@
 
 			function drawChart() {
 
-				url = "http://go-faster.devfest.com:8080/logs/proy/converted"
-				
-				var response = request("GET", url, function (body, isError) { 
+				url = "http://go-faster.devfest.com:8080/series/proy/data/conversions"
+
+				var response = request("GET", url, function (body, isError) {
 					if (isError){
 						alert('There is an error');
 					}
@@ -56,16 +56,19 @@
 						var data = new google.visualization.DataTable();
 						var response = JSON.parse(body).data;
 						response
-						
+
 						data.addColumn('number', 'Time');
-						data.addColumn('number', 'Download Speed (bit/s)');
-						data.addColumn('number', 'Up load Speed (bit/s)');
+						data.addColumn('number', 'Download Speed (Mbit/s)');
+						data.addColumn('number', 'Upload Speed (Mbit/s)');
+						data.addColumn('number', 'expected download speed');
+						data.addColumn('number', 'expected upload speed');
 						data.addRows(response);
+
 
 						// Chart options
 						var options = {
 							width : 1200,
-							height : 600, 
+							height : 600,
 							fontSize: 18,
 							fontName: "Georgia",
 							titlePosition: 'none',
@@ -73,11 +76,11 @@
 							hAxis: {title: 'Time'},
 							seriesType: 'line',
 							legend:{position: 'bottom', textStyle: {fontSize: 14}},
-							vAxis: { gridlines: { count: 4 }}, 
+							vAxis: { gridlines: { count: 4 }},
 							hAxis: { gridlines: { count: 0 }},
 							colors: ["#1F77B4", "#AEC7E8", "#FF7F0E", "#FFBB78", "#2CA02C"],
 						};
-				
+
 						var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 						chart.draw(data, options);
 					}
@@ -88,7 +91,7 @@
 
 	<body>
 
-		<h1>Internet speed</h1> 
+		<h1>Internet speed</h1>
 		<div class="container">
 			<div class="col-md-4 center">
 				<div id="chart_div"></div>

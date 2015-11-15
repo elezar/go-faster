@@ -45,6 +45,10 @@ func init() {
 
 		log.Printf("adding series '%s'", f.Name())
 		series[f.Name()] = &Series{Name: f.Name()}
+		err = series[f.Name()].load()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 }
 
@@ -65,7 +69,7 @@ func ListSeries() (ss []*Series) {
 	return
 }
 
-func CreateSeries(name string) (s *Series, err error) {
+func CreateSeries(name string, s *Series) (err error) {
 	if !regexName.MatchString(name) {
 		err = fmt.Errorf("error: '%s' does not match '%s'", name, regexName)
 		return
@@ -77,6 +81,11 @@ func CreateSeries(name string) (s *Series, err error) {
 	}
 
 	s = &Series{Name: name}
+	err = s.Save()
+	if err != nil {
+		return
+	}
+
 	seriesLock.Lock()
 	defer seriesLock.Unlock()
 	series[s.Name] = s
@@ -104,5 +113,19 @@ func GetSeries(name string) (s *Series) {
 	seriesLock.Lock()
 	defer seriesLock.Unlock()
 	s = series[name]
+	return
+}
+
+func UpdateSeries(name string, s *Series) (err error) {
+	if !SeriesExists(name) {
+		err = fmt.Errorf("series '%s' does not exist", name)
+		return
+	}
+
+	seriesLock.Lock()
+	defer seriesLock.Unlock()
+	series[name].ExpectedDownloadSpeed = s.ExpectedDownloadSpeed
+	series[name].ExpectedUploadSpeed = s.ExpectedUploadSpeed
+	err = series[name].Save()
 	return
 }

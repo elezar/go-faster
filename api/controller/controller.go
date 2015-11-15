@@ -2,7 +2,6 @@ package controller
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -15,18 +14,8 @@ func AddResource(ws *restful.WebService) {
 	Container.Add(ws)
 }
 
-type fs struct {
-	d http.Dir
-}
-
-func (self fs) Open(name string) (http.File, error) {
-	log.Println(name)
-	return self.d.Open(name)
-}
-
 func Init() {
-	fs := &fs{http.Dir("../views")}
-	Container.Handle("/ui/", http.StripPrefix("/ui/", http.FileServer(fs)))
+	Container.Handle("/ui/", http.StripPrefix("/ui/", http.FileServer(http.Dir("../views"))))
 
 	cors := restful.CrossOriginResourceSharing{
 		AllowedMethods: []string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"},
