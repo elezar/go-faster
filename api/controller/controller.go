@@ -15,6 +15,8 @@ func AddResource(ws *restful.WebService) {
 }
 
 func Init() {
+	Container.Handle("/views", http.FileServer(http.Dir("./views")))
+
 	cors := restful.CrossOriginResourceSharing{
 		AllowedMethods: []string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"},
 		ExposeHeaders:  []string{restful.HEADER_AccessControlAllowOrigin, restful.HEADER_AccessControlAllowMethods},

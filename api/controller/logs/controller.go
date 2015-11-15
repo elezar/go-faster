@@ -25,8 +25,8 @@ func initWebResource(ws *restful.WebService) {
 	ws.Route(ws.PUT("/{series_name}").To(addData).
 		Doc("add log entries").
 		Param(seriesName).
-		Reads([]model.Entry{}).
-		Writes([]model.Entry{}))
+		Reads(model.Entry{}).
+		Writes(model.Entry{}))
 
 	ws.Route(ws.GET("/{series_name}/converted").To(getData).
 		Doc("get data").

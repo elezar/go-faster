@@ -9,14 +9,14 @@ import (
 )
 
 func addData(request *restful.Request, response *restful.Response) {
-	d := []model.Entry{}
-	err := request.ReadEntity(&d)
+	d := new(model.Entry)
+	err := request.ReadEntity(d)
 	if err != nil {
 		controller.Error(response, err)
 		return
 	}
 
-	err = model.AddEntries(request.PathParameter("series_name"), d...)
+	err = model.AddEntries(request.PathParameter("series_name"), *d)
 	controller.CreateHandler(response, d, err)
 }
 
