@@ -1,11 +1,13 @@
 import re
+import argparse
+import requests
+import json
 import numpy as np
 import numpy.ma as ma
 import pylab as P
 import datetime
 
 item_matcher = re.compile("^([ \d:/]+) ### Starting:(.*?)^([ \d:/]+) ### Done:$", re.S+re.M)
-
 source_matcher = re.compile("Testing from (.*?)\s+\(([\d\.]+)\)", re.S)
 dest_matcher = re.compile("Hosted by (.*?)\[(.*?)\]:\s+(.*?)$", re.M+re.S)
 speed_matcher = re.compile("^Download: ([\d\.]+\s+.*?)$.*Upload: ([\d\.]+\s+.*?)$", re.M+re.S)
@@ -13,6 +15,12 @@ speed_matcher = re.compile("^Download: ([\d\.]+\s+.*?)$.*Upload: ([\d\.]+\s+.*?)
 recognised_units = ['s', 'm', 'bit/s', ]
 
 prefix_map = {'m': 1.e-3, 'k': 1.0e3, 'M': 1.0e6, 'G': 1.0e9 }
+
+dl_col  = 0
+ul_col = 1
+distance_col = 2
+latency_col = 3
+err_col = 4
 
 def get_factor(prefix):
   if prefix in prefix_map:
@@ -43,18 +51,23 @@ def process_item(text):
   try:
     s = source_matcher.search(text)
     d = dest_matcher.search(text[s.end():])
+    host = d.group(1)
+    distance_m, distance_units = split_units(d.group(2))
+    latency_s, latency_units = split_units(d.group(3))
     du = speed_matcher.search(text)
-    dl, dlu = split_units(du.group(1))
-    ul, ulu = split_units(du.group(2))
+    dl_bs, dlu = split_units(du.group(1))
+    ul_bs, ulu = split_units(du.group(2))
     err = 0
   except:
-    dl = 0
-    ul = 0
+    distance_m = 0
+    latency_s = 0
+    dl_bs = 0
+    ul_bs = 0
     err = 1
 
   # print dl, dlu, ul, ulu
 
-  return dl, ul, err
+  return dl_bs, ul_bs, distance_m, latency_s, err
 
 
 def set_axis():
@@ -73,10 +86,10 @@ def get_data(filename):
     start_time = datetime.datetime.strptime(m.group(1), '%Y/%m/%d %H:%M:%S')
     output = m.group(2)
     end_time = m.group(3)
-    dl, ul, err = process_item(output)
+    dl, ul, distance_m, latency_s, err = process_item(output)
 
     times.append(start_time)
-    rates.append([dl, ul, err])
+    rates.append([dl, ul, distance_m, latency_s, err])
 
   v = np.array(rates)
 
@@ -95,11 +108,42 @@ def get_average(t, v):
 
   return average
 
+
+
+def populate_api(filename, post_url):
+  """Read the specified API and populate the database from the logfile."""
+
+  t, v = get_data(filename)
+
+  num_data = len(t)
+
+  import time
+  headers = {'content-type': 'application/json'}
+  # proxies = {
+  #   "http": "http://go-faster.devfest.com:2000",
+  # }
+  for i in range(num_data):
+    data_point = {}
+    dt = t[i]
+    data_point['unixtime'] = int(time.mktime(dt.timetuple()))
+    data_point['download_speed_bs'] = int(v[i,dl_col])
+    data_point['upload_speed_bs'] = int(v[i,ul_col])
+    data_point['distance_m'] = int(v[i,distance_col])
+    data_point['latency_ms'] = int(v[i,latency_col]*1000)
+
+    data = json.dumps(data_point)
+    response = requests.put(post_url, proxies=proxies, headers=headers, data=data)
+
+    if response.status_code != 200:
+      print response
+
+
+
 def process_log(filename):
 
   t, v = get_data(filename)
-  valid = np.where(v[:,2] == 0)
-  invalid = np.where(v[:,2] == 1)
+  valid = np.where(v[:,err_col] == 0)
+  invalid = np.where(v[:,err_col] == 1)
 
   tv = t[valid]
   tiv = t[invalid]
@@ -138,11 +182,25 @@ def process_log(filename):
   return f
 
 if __name__ == "__main__":
-  import sys
-  try:
-    logname = sys.argv[1]
-  except:
-    pass
 
-  process_log(logname)
-  P.show()
+  parser = argparse.ArgumentParser(description='Process a log file')
+
+  parser.add_argument('logname', nargs=1,
+                     help='The name of the logfile to process')
+  parser.add_argument('--show-plot', action='store_true', default=False,
+                     help='A flag to indicate whether the DB should be updated from the log file')
+  parser.add_argument('--post-url', default="http://go-faster.devfest.com:8080/logs/proy",
+                     help='The name of the logfile to process')
+  parser.add_argument('--update-db', action='store_true', default=False,
+                     help='A flag to indicate whether the DB should be updated from the log file')
+
+  args = parser.parse_args()
+
+  logfile = args.logname[0]
+
+  if args.update_db:
+    populate_api(logfile, args.post_url)
+  else:
+    process_log(logfile)
+    if args.show_plot:
+      P.show()
