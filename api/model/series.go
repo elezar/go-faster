@@ -1,5 +1,5 @@
 package model
 
 type Series struct {
-	NAme string `json:"name"`
+	Name string `json:"name"`
 }

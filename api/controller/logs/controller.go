@@ -17,29 +17,30 @@ func init() {
 }
 
 func initWebResource(ws *restful.WebService) {
-	series := ws.PathParameter("series", "group to log into")
+	seriesName := ws.PathParameter("series_name", "group to log into")
 
 	from := ws.QueryParameter("from", "timestamp of the oldest data to retrieve")
 	until := ws.QueryParameter("until", "timestamp of the latest data to retrieve")
 
-	ws.Route(ws.POST("/{series}").To(addData).
+	ws.Route(ws.POST("/{series_name}").To(addData).
 		Doc("add log entries").
-		Param(series).
+		Param(seriesName).
 		Reads([]model.Entry{}).
 		Writes([]model.Entry{}))
+
+	ws.Route(ws.GET("/{series_name}/converted").To(getData).
+		Doc("get data").
+		Param(seriesName).
+		Param(from).
+		Param(until).
+		Writes(model.DataContainer{}))
 
 	ws.Route(ws.GET("/series").To(getSeries).
 		Doc("get all available log series").
 		Writes([]model.Series{}))
 
-	ws.Route(ws.POST("/series").To(createSeries).
+	ws.Route(ws.POST("/series/{series_name}").To(createSeries).
 		Doc("get all available log series").
-		Writes([]model.Series{}))
-
-	ws.Route(ws.GET("/{series}/converted").To(getData).
-		Doc("get data").
-		Param(series).
-		Param(from).
-		Param(until).
-		Writes(model.DataContainer{}))
+		Reads(model.Series{}).
+		Writes(model.Series{}))
 }
