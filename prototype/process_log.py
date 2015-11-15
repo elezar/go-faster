@@ -141,7 +141,6 @@ def populate_api(filename, post_url):
     if response.status_code != 200:
       print response
 
-    break
 
 
 def process_log(filename):
