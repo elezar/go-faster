@@ -120,10 +120,10 @@ def populate_api(filename, post_url):
   import time
   headers = {'content-type': 'application/json'}
 
-  # proxies = None
-  proxies = {
-    "http": "http://go-faster.devfest.com:2000",
-  }
+  proxies = None
+  # proxies = {
+  #   "http": "http://go-faster.devfest.com:2000",
+  # }
   for i in range(num_data):
     data_point = {}
     dt = t[i]
