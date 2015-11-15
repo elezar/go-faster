@@ -119,9 +119,11 @@ def populate_api(filename, post_url):
 
   import time
   headers = {'content-type': 'application/json'}
-  # proxies = {
-  #   "http": "http://go-faster.devfest.com:2000",
-  # }
+
+  # proxies = None
+  proxies = {
+    "http": "http://go-faster.devfest.com:2000",
+  }
   for i in range(num_data):
     data_point = {}
     dt = t[i]
@@ -132,6 +134,8 @@ def populate_api(filename, post_url):
     data_point['latency_ms'] = int(v[i,latency_col]*1000)
 
     data = json.dumps(data_point)
+
+    print data
     response = requests.put(post_url, proxies=proxies, headers=headers, data=data)
 
     if response.status_code != 200:
@@ -168,7 +172,9 @@ def process_log(filename):
   P.plot_date(t01, means[0]*y01, 'b:', label='Average (%.0f Mbit/s : %.0f%%)' % (means[0], means[0]/maxes[0]*100))
   P.plot_date(t, v[:,1]/1e6, 'r-', label='Upload')
   P.plot_date(t01, means[1]*y01, 'r:', label='Average (%.0f Mbit/s : %.0f%%)' % (means[1], means[1]/maxes[1]*100))
-  P.stem(tiv, 9*np.ones(tiv.size), linefmt='k-', markerfmt='ko', basefmt='k', label='Error (NO CONNECTION)')
+
+  if len(tiv) > 0:
+    P.stem(tiv, 9*np.ones(tiv.size), linefmt='k-', markerfmt='ko', basefmt='k', label='Error (NO CONNECTION)')
 
 
   P.plot_date(t01, maxes[0]*y01, 'b:')
@@ -189,7 +195,8 @@ if __name__ == "__main__":
                      help='The name of the logfile to process')
   parser.add_argument('--show-plot', action='store_true', default=False,
                      help='A flag to indicate whether the DB should be updated from the log file')
-  parser.add_argument('--post-url', default="http://go-faster.devfest.com:8080/logs/proy",
+  parser.add_argument('--series-name', default='demo')
+  parser.add_argument('--root-url', default="http://go-faster.devfest.com:8080/",
                      help='The name of the logfile to process')
   parser.add_argument('--update-db', action='store_true', default=False,
                      help='A flag to indicate whether the DB should be updated from the log file')
@@ -199,7 +206,9 @@ if __name__ == "__main__":
   logfile = args.logname[0]
 
   if args.update_db:
-    populate_api(logfile, args.post_url)
+    api_url = "%s/series/%s/data" % (args.root_url, args.series_name)
+
+    populate_api(logfile, api_url)
   else:
     process_log(logfile)
     if args.show_plot:
