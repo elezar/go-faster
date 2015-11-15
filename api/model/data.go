@@ -6,11 +6,11 @@ import (
 )
 
 type Entry struct {
-	Timestamp       time.Time `json:"timestamp"`
-	DistanceM       uint64    `json:"distance_m"`
-	LatencyMS       uint64    `json:"latency_ms"`
-	DownloadSpeedBS uint64    `json:"download_speed_bs"`
-	UploadSpeedBS   uint64    `json:"upload_speed_bs"`
+	Unixtime        int64  `json:"unixtime"`
+	DistanceM       uint64 `json:"distance_m"`
+	LatencyMS       uint64 `json:"latency_ms"`
+	DownloadSpeedBS uint64 `json:"download_speed_bs"`
+	UploadSpeedBS   uint64 `json:"upload_speed_bs"`
 }
 
 type DataContainer struct {
@@ -52,7 +52,7 @@ func GetData(name string, from, until time.Time) (dc *DataContainer, err error) 
 
 	dc = new(DataContainer)
 	for _, e := range entries {
-		dc.Data = append(dc.Data, []interface{}{e.Timestamp.Unix(), e.UploadSpeedBS, e.DownloadSpeedBS})
+		dc.Data = append(dc.Data, []interface{}{e.Unixtime, e.UploadSpeedBS, e.DownloadSpeedBS})
 	}
 
 	return
