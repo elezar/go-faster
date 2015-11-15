@@ -48,11 +48,19 @@
 						formattedTime = hours + ':' + minutes.substr(-2)
 				element[0] = date;
 				return element
+			}
 
+			function showErrors(element, index, array){
+				if (element[1] == 0. && element[2] == 0.){
+					element.push(5);
+				}
+				else{
+					element.push(0);
+				}
+				return element;
 			}
 
 			function drawChart() {
-
 				url = "http://go-faster.devfest.com:8080/series/proy/data/conversions"
 
 				var response = request("GET", url, function (body, isError) {
@@ -63,16 +71,19 @@
 						var data = new google.visualization.DataTable();
 						var response = JSON.parse(body).data;
 
+						response.forEach(showErrors);
 						response.forEach(unixTimestampToDatetime);
 
 						//data.addColumn('string', 'Time');
-						data.addColumn('datetime', 'Time')
+						data.addColumn('datetime', 'Time');
 						data.addColumn('number', 'Download Speed (bit/s)');
 						data.addColumn('number', 'Upload Speed (bit/s)');
-						data.addColumn('number', 'expected download speed');
-						data.addColumn('number', 'expected upload speed');
+						data.addColumn('number', 'Expected Download Speed');
+						data.addColumn('number', 'Expected Upload Speed');
+						data.addColumn('number', 'Error');
+						//data.addColumn({type:'string',role:'annotation'});
+						
 						data.addRows(response);
-
 
 						// Chart options
 						var options = {
@@ -84,6 +95,7 @@
 							vAxis: {title: 'Rate Mbit/s'},
 							hAxis: {title: 'Time'},
 							seriesType: 'line',
+							series: {4: {type: 'area'}},
 							legend:{position: 'bottom', textStyle: {fontSize: 20}},
 							vAxis: { gridlines: { count: 4 }},
 							hAxis: { gridlines: { count: 0 }},

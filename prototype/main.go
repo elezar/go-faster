@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -17,11 +18,19 @@ func runner(what string) {
 
 	log.SetOutput(f)
 	log.Println("### Starting:")
+	defer log.Println("### Done:")
+
 	cmd := exec.Command(what)
-	cmd.Stdout = io.MultiWriter(f, os.Stdout)
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	log.Println("### Done:")
+
+	output := io.MultiWriter(f, os.Stdout)
+	cmd.Stdout = output
+	cmd.Stderr = output
+
+	err = cmd.Run()
+	if err != nil {
+		fmt.Fprintln(output, "Error running: ", what)
+		fmt.Fprintln(output, err)
+	}
 
 }
 
