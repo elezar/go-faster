@@ -64,6 +64,7 @@
 			function drawCharts() {
 				drawChart("proy")
 				drawChart("dev_fest")
+				drawChart("dev_fest_casino")
 			}
 			function drawChart(series_name) {
 				url = "http://go-faster.devfest.com:8080/series/" +
@@ -103,6 +104,7 @@
 							height : 700,
 							fontSize: 18,
 							fontName: "Georgia",
+							title: series_name,
 							titlePosition: 'none',
 							vAxis: {title: 'Rate Mbit/s'},
 							hAxis: {title: 'Time'},
@@ -135,6 +137,12 @@
 		<div class="container">
 			<div class="col-md-4 center">
 				<div id="dev_fest"></div>
+			</div>
+		</div>
+		<h2>dev_fest_casino</h2>
+		<div class="container">
+			<div class="col-md-4 center">
+				<div id="dev_fest_casino"></div>
 			</div>
 		</div>
 
