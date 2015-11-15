@@ -37,6 +37,12 @@ func (self Fields) GetRow(metaData *Series, e Entry) (d []interface{}) {
 			v = fmtSpeed(f.Format, metaData.ExpectedDownloadSpeed)
 		case "latency", "ping":
 			v = e.LatencyMS
+		case "error":
+			if e.UploadSpeedBS == 0 || e.DownloadSpeedBS == 0 {
+				v = fmtSpeed(f.Format, metaData.ExpectedDownloadSpeed)
+			} else {
+				v = 0
+			}
 		default:
 			log.Printf("unknown field '%s'", f.Field)
 		}

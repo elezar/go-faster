@@ -66,7 +66,8 @@
 					"&field=upload_speed:mbit_s" +
 					"&field=download_speed:mbit_s" +
 					"&field=expected_upload_speed:mbit_s" +
-					"&field=expected_download_speed:mbit_s";
+					"&field=expected_download_speed:mbit_s" +
+					"&field=error:mbit_s";
 
 				var response = request("GET", url, function (body, isError) {
 					if (isError){
@@ -76,7 +77,7 @@
 						var data = new google.visualization.DataTable();
 						var response = JSON.parse(body).data;
 
-						response.forEach(showErrors);
+						// response.forEach(showErrors);
 						response.forEach(unixTimestampToDatetime);
 
 						//data.addColumn('string', 'Time');
