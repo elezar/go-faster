@@ -42,6 +42,15 @@
 					xmlhttp.send();
 			}
 
+			function unixTimestampToDatetime(element, index, array){
+				var date = new Date(element[0]*1000),
+						hours = date.getHours(),
+						minutes = "0" + date.getMinutes(),
+						formattedTime = hours + ':' + minutes.substr(-2)
+				element[0] = date;
+				return element
+
+			}
 
 			function drawChart() {
 
@@ -54,9 +63,10 @@
 					else{
 						var data = new google.visualization.DataTable();
 						var response = JSON.parse(body).data;
-						response
+						response.forEach(unixTimestampToDatetime);
 						
-						data.addColumn('number', 'Time');
+						//data.addColumn('string', 'Time');
+						data.addColumn('datetime', 'Time')
 						data.addColumn('number', 'Download Speed (bit/s)');
 						data.addColumn('number', 'Up load Speed (bit/s)');
 						data.addRows(response);
@@ -71,7 +81,7 @@
 							vAxis: {title: 'Rate Mbit/s'},
 							hAxis: {title: 'Time'},
 							seriesType: 'line',
-							legend:{position: 'bottom', textStyle: {fontSize: 14}},
+							legend:{position: 'bottom', textStyle: {fontSize: 20}},
 							vAxis: { gridlines: { count: 4 }}, 
 							hAxis: { gridlines: { count: 0 }},
 							colors: ["#1F77B4", "#AEC7E8", "#FF7F0E", "#FFBB78", "#2CA02C"],
