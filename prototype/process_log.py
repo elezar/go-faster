@@ -135,12 +135,13 @@ def populate_api(filename, post_url):
 
     data = json.dumps(data_point)
 
-    print data
-    response = requests.put(post_url, proxies=proxies, headers=headers, data=data)
+    # print data
+    response = requests.put(post_url, data=data, proxies=proxies, headers=headers)
 
     if response.status_code != 200:
       print response
 
+    break
 
 
 def process_log(filename):
@@ -196,7 +197,7 @@ if __name__ == "__main__":
   parser.add_argument('--show-plot', action='store_true', default=False,
                      help='A flag to indicate whether the DB should be updated from the log file')
   parser.add_argument('--series-name', default='demo')
-  parser.add_argument('--root-url', default="http://go-faster.devfest.com:8080/",
+  parser.add_argument('--root-url', default="http://go-faster.devfest.com:8080",
                      help='The name of the logfile to process')
   parser.add_argument('--update-db', action='store_true', default=False,
                      help='A flag to indicate whether the DB should be updated from the log file')
