@@ -3,6 +3,7 @@ package output
 import (
 	"github.com/emicklei/go-restful"
 	"github.com/pakohan/go-faster/api/controller"
+	"github.com/pakohan/go-faster/api/model"
 )
 
 func init() {
@@ -23,5 +24,5 @@ func initWebResource(ws *restful.WebService) {
 		Doc("get data").
 		Param(from).
 		Param(until).
-		Writes(DataContainer{}))
+		Writes(model.DataContainer{}))
 }

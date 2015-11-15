@@ -3,6 +3,7 @@ package input
 import (
 	"github.com/emicklei/go-restful"
 	"github.com/pakohan/go-faster/api/controller"
+	"github.com/pakohan/go-faster/api/model"
 )
 
 func init() {
@@ -18,5 +19,6 @@ func init() {
 func initWebResource(ws *restful.WebService) {
 	ws.Route(ws.POST("/").To(addData).
 		Doc("add a log entry").
-		Reads(Entry{}))
+		Reads([]model.Entry{}).
+		Writes([]model.Entry{}))
 }

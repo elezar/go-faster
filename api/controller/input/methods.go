@@ -1,13 +1,19 @@
 package input
 
 import (
-	"time"
-
 	"github.com/emicklei/go-restful"
+	"github.com/pakohan/go-faster/api/controller"
+	"github.com/pakohan/go-faster/api/model"
 )
 
-type Entry struct {
-	Time time.Time `json:"time"`
-}
+func addData(request *restful.Request, response *restful.Response) {
+	d := []model.Entry{}
+	err := request.ReadEntity(&d)
+	if err != nil {
+		controller.Error(response, err)
+		return
+	}
 
-func addData(request *restful.Request, response *restful.Response) {}
+	err = model.AddEntry(d...)
+	controller.CreateHandler(response, d, err)
+}
