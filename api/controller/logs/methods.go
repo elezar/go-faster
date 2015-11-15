@@ -16,19 +16,26 @@ func addData(request *restful.Request, response *restful.Response) {
 		return
 	}
 
-	err = model.AddEntry(d...)
+	err = model.AddEntries(request.PathParameter("series_name"), d...)
 	controller.CreateHandler(response, d, err)
 }
 
 func getData(request *restful.Request, response *restful.Response) {
-	d, err := model.GetData(time.Time{}, time.Time{})
+	d, err := model.GetData(request.PathParameter("series_name"), time.Time{}, time.Time{})
 	controller.GetHandler(response, d, err)
 }
 
 func getSeries(request *restful.Request, response *restful.Response) {
-
+	s := model.ListSeries()
+	controller.GetHandler(response, s, nil)
 }
 
 func createSeries(request *restful.Request, response *restful.Response) {
+	s, err := model.CreateSeries(request.PathParameter("series_name"))
+	controller.CreateHandler(response, s, err)
+}
 
+func deleteSeries(request *restful.Request, response *restful.Response) {
+	err := model.DeleteSeries(request.PathParameter("series_name"))
+	controller.DeleteHandler(response, err)
 }

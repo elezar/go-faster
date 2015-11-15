@@ -22,7 +22,7 @@ func initWebResource(ws *restful.WebService) {
 	from := ws.QueryParameter("from", "timestamp of the oldest data to retrieve")
 	until := ws.QueryParameter("until", "timestamp of the latest data to retrieve")
 
-	ws.Route(ws.POST("/{series_name}").To(addData).
+	ws.Route(ws.PUT("/{series_name}").To(addData).
 		Doc("add log entries").
 		Param(seriesName).
 		Reads([]model.Entry{}).
@@ -40,7 +40,11 @@ func initWebResource(ws *restful.WebService) {
 		Writes([]model.Series{}))
 
 	ws.Route(ws.POST("/series/{series_name}").To(createSeries).
-		Doc("get all available log series").
-		Reads(model.Series{}).
+		Doc("create a new series").
+		Param(seriesName).
 		Writes(model.Series{}))
+
+	ws.Route(ws.DELETE("/series/{series_name}").To(deleteSeries).
+		Doc("delete an existing series").
+		Param(seriesName))
 }

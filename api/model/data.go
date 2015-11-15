@@ -1,13 +1,8 @@
 package model
 
 import (
-	"sync"
+	"fmt"
 	"time"
-)
-
-var (
-	l       sync.Mutex
-	entries = []Entry{}
 )
 
 type Entry struct {
@@ -22,21 +17,43 @@ type DataContainer struct {
 	Data [][]interface{} `json:"data"`
 }
 
-func AddEntry(e ...Entry) (err error) {
-	l.Lock()
-	defer l.Unlock()
+func AddEntries(name string, e ...Entry) (err error) {
+	var s *Series
+	if !SeriesExists(name) {
+		s, err = CreateSeries(name)
+		if err != nil {
+			return
+		}
+	} else {
+		s = GetSeries(name)
+	}
 
-	entries = append(entries, e...)
+	if s == nil {
+		err = fmt.Errorf("series '%s' does not exist", name)
+		return
+	}
+
+	err = s.AddEntries(e...)
 	return
 }
 
-func GetData(from, until time.Time) (dc *DataContainer, err error) {
-	l.Lock()
-	defer l.Unlock()
+func GetData(name string, from, until time.Time) (dc *DataContainer, err error) {
+	s := GetSeries(name)
+	if s == nil {
+		err = fmt.Errorf("series '%s' does not exist", name)
+		return
+	}
+
+	var entries []Entry
+	entries, err = s.GetEntries(from, until)
+	if err != nil {
+		return
+	}
 
 	dc = new(DataContainer)
 	for _, e := range entries {
-		dc.Data = append(dc.Data, []interface{}{e.Timestamp.Unix(), e.DownloadSpeedBS, e.UploadSpeedBS})
+		dc.Data = append(dc.Data, []interface{}{e.Timestamp.Unix(), e.UploadSpeedBS, e.DownloadSpeedBS})
 	}
+
 	return
 }

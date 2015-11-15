@@ -27,7 +27,7 @@ func Init() {
 
 	config := swagger.Config{
 		WebServices:     Container.RegisteredWebServices(),
-		WebServicesUrl:  "http://go-faster.devfest.com:8080/",
+		WebServicesUrl:  "http://go-faster.devfest.com:8080",
 		ApiPath:         "/apidocs.json",
 		SwaggerPath:     "/apidocs/",
 		SwaggerFilePath: "./swagger",
