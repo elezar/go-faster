@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"io"
 	"log"
@@ -48,10 +47,6 @@ func main() {
 	flag.Parse()
 
 	*period = *period * int(time.Second)
-
-	//	fmt.Println(*command)
-	//	fmt.Println(*period)
-	//	fmt.Println(*outputPath)
 
 	runner(*command, *outputPath)
 
