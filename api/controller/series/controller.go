@@ -21,6 +21,7 @@ func initWebResource(ws *restful.WebService) {
 
 	from := ws.QueryParameter("from", "timestamp of the oldest data to retrieve")
 	until := ws.QueryParameter("until", "timestamp of the latest data to retrieve")
+	field := ws.QueryParameter("field", "fields to add")
 
 	ws.Route(ws.POST("").To(createSeries).
 		Doc("create a new series").
@@ -57,6 +58,7 @@ func initWebResource(ws *restful.WebService) {
 		Param(seriesName).
 		Param(from).
 		Param(until).
+		Param(field).
 		Writes(model.DataContainer{}))
 
 }

@@ -39,7 +39,7 @@ func AddEntries(name string, e ...Entry) (err error) {
 	return
 }
 
-func GetData(name string, from, until time.Time) (dc *DataContainer, err error) {
+func GetData(name string, from, until time.Time, fields Fields) (dc *DataContainer, err error) {
 	s := GetSeries(name)
 	if s == nil {
 		err = fmt.Errorf("series '%s' does not exist", name)
@@ -54,13 +54,7 @@ func GetData(name string, from, until time.Time) (dc *DataContainer, err error) 
 
 	dc = &DataContainer{MetaData: s}
 	for _, e := range entries {
-		dc.Data = append(dc.Data, []interface{}{
-			e.Unixtime,
-			float64(e.DownloadSpeedBS) / float64(1024*1024),
-			float64(e.UploadSpeedBS) / float64(1024*1024),
-			float64(s.ExpectedDownloadSpeed) / float64(1024*1024),
-			float64(s.ExpectedUploadSpeed) / float64(1024*1024),
-		})
+		dc.Data = append(dc.Data, fields.GetRow(s, e))
 	}
 
 	return

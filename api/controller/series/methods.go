@@ -1,6 +1,8 @@
 package series
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/emicklei/go-restful"
@@ -61,6 +63,51 @@ func addData(request *restful.Request, response *restful.Response) {
 }
 
 func getData(request *restful.Request, response *restful.Response) {
-	d, err := model.GetData(request.PathParameter("series_name"), time.Time{}, time.Time{})
+	from, err := getTimestamp(request.QueryParameter("from"))
+	if err != nil {
+		controller.Error(response, err)
+		return
+	}
+
+	until, err := getTimestamp(request.QueryParameter("until"))
+	if err != nil {
+		controller.Error(response, err)
+		return
+	}
+
+	rawFields := request.Request.URL.Query()["field"]
+	var fields model.Fields
+	for _, f := range rawFields {
+		p := strings.Split(f, ":")
+		switch len(p) {
+		case 1:
+			fields = append(fields, model.Field{Field: p[0]})
+		case 2:
+			fields = append(fields, model.Field{Field: p[0], Format: p[1]})
+		default:
+			controller.Error(response, fmt.Errorf("malformed fields format '%s'", f))
+		}
+	}
+
+	d, err := model.GetData(request.PathParameter("series_name"), from, until, fields)
 	controller.GetHandler(response, d, err)
+}
+
+const (
+	fmtDate     = "2006-01-02"
+	fmtDatetime = "2006-01-02T15:04:05"
+)
+
+func getTimestamp(ts string) (t time.Time, err error) {
+	switch len(ts) {
+	case 0:
+	case len(fmtDate):
+		t, err = time.Parse(fmtDate, ts)
+	case len(fmtDatetime):
+		t, err = time.Parse(fmtDatetime, ts)
+	default:
+		err = fmt.Errorf("invalid date format, either '%s' or '%s' is allowed")
+	}
+
+	return
 }

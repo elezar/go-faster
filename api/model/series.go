@@ -89,6 +89,16 @@ func (self *Series) GetEntries(from, until time.Time) (entries []Entry, err erro
 			return
 		}
 
+		if !from.IsZero() && from.After(time.Unix(e.Unixtime, 0)) {
+			// log.Printf("1: %s > %s", from, time.Unix(e.Unixtime, 0))
+			continue
+		}
+
+		if !until.IsZero() && until.Before(time.Unix(e.Unixtime, 0)) {
+			// log.Printf("2: %s < %s", until, time.Unix(e.Unixtime, 0))
+			continue
+		}
+
 		entries = append(entries, *e)
 	}
 
