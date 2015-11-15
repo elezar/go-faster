@@ -1,27 +1,32 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
-	"time"
-	"flag"
-	"fmt"
 	"strings"
+<<<<<<< HEAD
+	"time"
+=======
 	"regexp"
 	"strconv"
+>>>>>>> e5ece33abce1a5bcff86ac80547342188ecc5725
 )
 
 // runs the given command and writes the stdout to the given outputPath
-func runner(cmdString, outputPath string) {
+func runner(cmdString, outputPath string) error {
 	cmdFields := strings.Fields(cmdString)
 	cmdName := cmdFields[0]
 	cmdParams := cmdFields[1:]
 
-	f, err := os.OpenFile(outputPath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	f, err := os.OpenFile(outputPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		panic("NOOOOO")
+		fmt.Println("Error opening file: ", outputPath)
+		fmt.Println(err)
+		return err
 	}
 	defer f.Close()
 
@@ -37,6 +42,8 @@ func runner(cmdString, outputPath string) {
 		fmt.Fprintln(output, "Error running: ", cmdString)
 		fmt.Fprintln(output, err, cmdString)
 	}
+
+	return nil
 
 }
 
@@ -70,6 +77,7 @@ func main() {
 	}
 
 		runner(*command, *outputPath)
+>>>>>>> e5ece33abce1a5bcff86ac80547342188ecc5725
 
 	for _ = range time.Tick(time.Duration(periodDuration)) {
 		runner(*command, *outputPath)
