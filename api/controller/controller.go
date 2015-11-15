@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -81,6 +82,7 @@ func Error(response *restful.Response, err error) {
 	} else if err == sql.ErrNoRows {
 		response.WriteHeader(http.StatusNotFound)
 	} else {
+		log.Println(err.Error())
 		response.WriteError(http.StatusInternalServerError, err)
 	}
 }
