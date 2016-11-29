@@ -20,8 +20,8 @@ go-faster.amd64: go-faster.go
 	GOARCH=amd64 GOOS=linux go build -o $@ $<
 
 .PHONY: build.docker.rpi
-build.docker.rpi: go-faster.rpi Dockerfile
-	docker build --rm  -t $(RPI_IMAGE):$(TAG) -f Dockerfile .
+build.docker.rpi: go-faster.rpi Dockerfile.rpi
+	docker build --rm  -t $(RPI_IMAGE):$(TAG) -f Dockerfile.rpi .
 
 .PHONY: build.docker.amd64
 build.docker.amd64: go-faster.amd64 Dockerfile.amd64
