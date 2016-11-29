@@ -53,6 +53,8 @@ func main() {
 	speeds := make(chan float64)
 	force := make(chan bool)
 
+	period := 1 * time.Minute
+
 	go func() {
 		force <- true
 		process(speeds, errors)
@@ -63,7 +65,7 @@ func main() {
 		select {
 		case <-force:
 			run = true
-		case <-time.After(10 * time.Second):
+		case <-time.After(period):
 			run = true
 		}
 		if run {
