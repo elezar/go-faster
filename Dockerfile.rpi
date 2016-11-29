@@ -1,8 +1,7 @@
-FROM hypriot/rpi-golang
+FROM hypriot/rpi-alpine
 MAINTAINER Evan Lezar <evanlezar@gmail.com>
 
-COPY . ${GOPATH}/src/go-faster
-WORKDIR ${GOPATH}/src/go-faster
+RUN apk add --no-cache ca-certificates
 
-RUN go get -d -v
-
+COPY go-faster.rpi /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/go-faster.rpi"]
