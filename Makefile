@@ -23,5 +23,5 @@ build.push: build.docker
 	docker push "$(IMAGE):$(TAG)"
 
 .PHONY: run
-run:
+run: build.docker
 	docker run --rm -ti $(IMAGE):$(TAG)
