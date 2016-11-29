@@ -15,8 +15,8 @@ go-faster.rpi: go-faster.go
 
 
 .PHONY: build.docker
-build.docker: go-faster.rpi Dockerfile.rpi
-	docker build --rm  -t $(IMAGE):$(TAG) -f Dockerfile.rpi .
+build.docker: go-faster.rpi Dockerfile
+	docker build --rm  -t $(IMAGE):$(TAG) -f Dockerfile .
 
 .PHONY: build.push
 build.push: build.docker
