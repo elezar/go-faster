@@ -68,7 +68,6 @@ func main() {
 		}
 		if run {
 			runTest(speeds, errors)
-			log.Println("After runTest")
 		}
 	}
 
