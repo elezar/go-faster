@@ -1,3 +1,6 @@
+go-faster.rpi
+go-faster.amd64
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a
