@@ -1,0 +1,7 @@
+FROM alpine:3.4
+MAINTAINER Evan Lezar <evanlezar@gmail.com>
+
+RUN apk add --no-cache ca-certificates
+
+COPY go-faster.amd64 /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/go-faster.amd64"]
