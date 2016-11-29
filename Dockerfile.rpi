@@ -1,9 +1,8 @@
 FROM hypriot/rpi-golang
 MAINTAINER Evan Lezar <evanlezar@gmail.com>
 
-COPY . /go/src/app
-WORKDIR /go/src/app
+COPY . ${GOPATH}/src/go-faster
+WORKDIR ${GOPATH}/src/go-faster
 
 RUN go get -d -v
-RUN go install -v
 
