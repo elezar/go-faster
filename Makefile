@@ -40,3 +40,9 @@ run.rpi: build.docker.rpi
 .PHONY: run
 run: build.docker.amd64
 	docker run --rm -ti $(IMAGE):$(TAG)
+
+
+clean:
+	docker rmi -f $(RPI_IMAGE):$(TAG)
+	docker rmi -f $(IMAGE):$(TAG)
+	rm -f go-faster.rpi go-faster.amd64
