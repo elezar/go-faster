@@ -5,6 +5,9 @@ import (
 
 	"time"
 
+	"net/http"
+	_ "net/http/pprof"
+
 	fast "gopkg.in/ddo/go-fast.v0"
 )
 
@@ -49,6 +52,10 @@ func runTest(speeds chan<- float64, errors chan<- error) {
 }
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	errors := make(chan error)
 	speeds := make(chan float64)
 	force := make(chan bool)
