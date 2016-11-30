@@ -27,11 +27,17 @@ build.docker.rpi: go-faster.rpi Dockerfile.rpi
 build.docker.amd64: go-faster.amd64 Dockerfile.amd64
 	docker build --rm  -t $(IMAGE):$(TAG) -f Dockerfile.amd64 .
 
+.PHONY: tag.latest
+tag.latest: build.docker
+	docker tag $(IMAGE):$(TAG) $(IMAGE):latest
+	docker tag $(RPI_IMAGE):$(TAG) $(RPI_IMAGE):latest
 
 .PHONY: build.push
-build.push: build.docker
+build.push: build.docker tag.latest
 	docker push "$(IMAGE):$(TAG)"
+	docker push "$(IMAGE):latest"
 	docker push "$(RPI_IMAGE):$(TAG)"
+	docker push "$(RPI_IMAGE):latest"
 
 .PHONY: run.rpi
 run.rpi: build.docker.rpi
